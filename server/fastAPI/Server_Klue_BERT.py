@@ -84,16 +84,17 @@ async def evaluate_response(user_input: dict):
         good_score = primary_score
         bad_score = score_dict.get("bad", 0.0)
 
-    # 만약 모델이 딱 1개의 아웃풋만 주는 세팅이라 bad_score가 누락되었다면 자동 보정
-    if len(probabilities) == 1:
-        # 모델의 유일한 출력이 good 확률이라면 bad는 1에서 뺀 값
-        bad_score = 1.0 - good_score
-
     # 임계값(Threshold) 판정 알고리즘 적용
-    if good_score >= 0.5: 
+    THRESHOLD = 0.5
+    MARGIN_MIN = 0.2 #good과 bad의 최소 차이 기준 값
+
+    # 판정 로직: Threshold를 넘겼거나 good_score - bad_score가 0.2 이상일 경우 good
+    # bad는 아닌데 특정 감정으로 분류하기 애매한 경우 good_score가 낮게 나오는 문제 방지
+    if (good_score >= THRESHOLD) or ((good_score - bad_score) >= MARGIN_MIN):
         prediction = "good"
-    else: 
+    else:
         prediction = "bad"
+
 
     # =====================================
     # 4. 언리얼 연동용 게이지 델타 값 연산 (3턴 기획 맞춤)

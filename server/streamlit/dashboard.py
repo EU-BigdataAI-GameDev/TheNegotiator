@@ -72,9 +72,11 @@ if player_input:
                 stab_delta = data.get("stability_delta", 0)
                 ang_delta = data.get("anger_delta", 0)
                 good_score = data.get("good", 0.0)
+                bad_score = data.get("bad", 0.0)
                 
                 # --- [추가기능] Threshold 판정 시각화 바 구성 ---
                 threshold_value = 0.5  # 서버와 싱크 맞춘 임계값 기준선
+                margin_min = 0.2 #bad가 0.1 이하면 good 판정(감정을 분류하진 못했지만 나쁜말은 아님)
                 
                 st.markdown('<div class="th-container">', unsafe_allow_html=True)
                 th_col1, th_col2 = st.columns([3, 7])
@@ -87,6 +89,8 @@ if player_input:
                     st.progress(min(max(float(good_score), 0.0), 1.0), text=f"Good Score: {good_score*100:.1f}%")
                     if good_score >= threshold_value:
                         st.markdown(f"🟢 **판정 결과:** 기준치({threshold_value*100:.0f}%)를 넘었으므로 **GOOD** ")
+                    elif (good_score - bad_score) >= margin_min:
+                        st.markdown(f"🔴 **판정 결과:** 기준치를 넘기진 못했지만 good_score와 bad_score의 차이가 ({margin_min*100:.0f}%) 이상이므로 **GOOD**")
                     else:
                         st.markdown(f"🔴 **판정 결과:** 우호도가 기준치({threshold_value*100:.0f}%) 미만이므로 **BAD**")
                 st.markdown('</div>', unsafe_allow_html=True)
