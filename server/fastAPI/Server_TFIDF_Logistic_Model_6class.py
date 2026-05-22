@@ -59,9 +59,14 @@ async def predict(request: PredictRequest):
         bad_score = score_dict.get("bad", 0.0)
 
     # 임계값(Threshold) 판정 알고리즘 적용
-    if good_score >= 0.5: 
+    THRESHOLD = 0.5
+    BAD_SAFE_ZONE = 0.1
+
+    # 판정 로직: Threshold를 넘겼거나 bad_score가 0.1 이하일 경우 good
+    # (bad는 아닌데 특정 감정으로 분류하기 애매한 경우 0.5를 넘기지 못하는 문제 방지)
+    if (good_score >= THRESHOLD) or (bad_score <= BAD_SAFE_ZONE):
         prediction = "good"
-    else: 
+    else:
         prediction = "bad"
 
     # =====================================
