@@ -36,8 +36,8 @@ Streamlit 웹 대시보드가 동시에 공유하는 API 기반 플랫폼**으�
 
 두 가지 모델을 학습하고 성능을 비교하여 최적 모델을 서비스에 적용했습니다.
 
-| 모델 | Accuracy | F1-Score | 평균 추론 속도 |
-|---|---|---|---|
+| 모델 | Accuracy | F1-Score |
+|---|---|---|
 | TF-IDF + Logistic Regression | 0.75 | 0.60 |
 | **KLUE-BERT (Fine-tuned)** | **0.81** | **0.68** |
 
@@ -46,9 +46,12 @@ Streamlit 웹 대시보드가 동시에 공유하는 API 기반 플랫폼**으�
 <br>
 
 ## 🏗️ 시스템 아키텍처
-Unreal Engine 5 (VaRest)  ─┐
-├──▶  FastAPI 서버  ──▶  KLUE-BERT / TF-IDF 모델
-Streamlit 대시보드        ─┘         (POST /predict)
+```mermaid
+graph LR
+    A[Unreal Engine 5VaRest Plugin] -->|POST /predict| C[FastAPI 서버]
+    B[Streamlit 대시보드] -->|POST /predict| C
+    C --> D[KLUE-BERT / TF-IDF 모델]
+```
 
 Unreal Engine과 Streamlit은 동일한 FastAPI 서버에 요청을 보내고
 동일한 JSON 응답 구조(`emotion`)를 받는 대칭 구조로 설계했습니다.
